@@ -14,10 +14,10 @@ def save_simulation(sim_image: SimulateImage,
                     num: int, filename: str,
                     rewrite: bool = False) -> None:
     if rewrite:
-        mode = 'w'
         first_key = 0
+        with File(filename, 'w'):
+            pass
     else:
-        mode = 'a'
         with File(filename, 'a') as f:
             if len(f.keys()):
                 first_key = max(map(int, list(f.keys()))) + 1
@@ -26,7 +26,7 @@ def save_simulation(sim_image: SimulateImage,
     for i in tqdm(range(first_key, num + first_key)):
         label = random.randint(0, 3)
         img = sim_image.simulate_image(label)
-        with File(filename, mode) as f:
+        with File(filename, 'a') as f:
             img_dset = f.create_dataset(str(i), data=img)
             img_dset.attrs['class'] = label
             img_dset.attrs['class_name'] = _LABEL_DICT[label]
